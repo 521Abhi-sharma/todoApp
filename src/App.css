@@ -1,0 +1,186 @@
+div#root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* items list component css */
+.todolistContainer {
+  /* border: 1px solid red; */
+  margin: 10px;
+}
+
+.todo_item {
+  padding: 10px;
+  border: 1px solid white;
+  border-radius: 15px;
+}
+
+.todo_title {
+  color: white;
+  border-radius: 15px;
+  padding: 10px 0 10px 0;
+  color: white;
+  text-align: justify;
+}
+
+.todo_title p {
+  margin: 0;
+}
+p.task-done {
+  text-decoration: line-through;
+}
+
+.item-btns button {
+  background: radial-gradient(black, transparent);
+  color: azure;
+  border: none;
+}
+
+.item-btns button:hover {
+  background-color: #d1d9e3;
+  border-color: #c9d2df;
+}
+
+.item-btns {
+  float: right;
+}
+
+/* ===from  component css========= */
+.formContainer {
+  /* border: 1px solid red; */
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.todoForm {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid white;
+  border-radius: 15px;
+}
+
+/* filter css */
+input.searchByDateFilter.form-control {
+  width: 160px;
+  float: left;
+  height: 50px;
+  background: linear-gradient(45deg, black, transparent);
+  color: white;
+}
+
+button.from-open-close-btn.btn.btn-primary {
+  font-size: 24px;
+  border-radius: 5px;
+  background: radial-gradient(black, transparent);
+  border: 1px solid;
+  float: right;
+}
+
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #c4c4c4;
+  background-clip: padding-box;
+  border: 1px solid white;
+  appearance: none;
+  border-radius: .375rem;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.todo-form-submit {
+  background: radial-gradient(black, transparent);
+  border: none;
+}
+
+.form-close {
+  display: none;
+}
+
+.form-open {
+  display: block;
+}
+
+
+
+.footer {
+  width: auto;
+  /* max-height: 50px; */
+  background: black;
+  margin-top: auto;
+}
+
+.footer p {
+  color: white;
+  padding: 10px;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+
+
+/* model css */
+.model-main{
+  display: none;
+}
+.model-main.model-open {
+  display: block;
+}
+.model-backdrop {
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  overflow: hidden;
+  z-index: 100;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+}
+.model {
+  border: 2px solid white;
+  width: 350px;
+  margin: auto;
+  height: 200px;
+  background: linear-gradient(124deg, black, transparent);
+  border-radius: 15px;
+  color: white;
+  position: relative;
+  z-index: 999;
+}
+
+.model-title {
+  text-align: center;
+  padding: 10px;
+  text-transform: uppercase;
+}
+.model-body {
+  text-align: justify;
+  padding: 10px;
+  font-size: 21px;
+  text-transform: capitalize;
+}
+.model-footer {
+  padding: 10px;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+
+/* vallidation css */
+.form-control.invalid {
+  border: 2px solid #ef0839;
+  border-radius: 5px;
+}
+
+span.error-msg {
+  color: red;
+  text-transform: capitalize;
+}
