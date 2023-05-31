@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from "react";
 import Button from 'react-bootstrap/Button';
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
+import { VscIssueReopened } from "react-icons/vsc";
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { icon } from '@fortawesome/fontawesome-svg-core/import.macro';
 
@@ -84,13 +85,30 @@ function TodoForm(props) {
         props.filterNOteBookData(event.target.value);
     }
 
+    const getAllListHandler=()=>{
+        setSearchByDate('');
+        props.getAllList();
+    }
+
     return (
         <>
             <div className="formContainer">
-                <div className="from_collaps_button">
-                    <Form.Control className="searchByDateFilter" type="date" placeholder="search by date" value={searchByDate} onChange={searchByDateHandler} />
-                    <Button className="from-open-close-btn" onClick={todoFormOpenCloseHandler} >{!todoFormOpenState ? (<AiOutlinePlus/>): (<AiOutlineMinus/>)}</Button>
+                <div className="list_action_container">
+                    <div className="search_list">
+                        <Form.Control className="filterListByDate" type="date"  value={searchByDate} onChange={searchByDateHandler} /> 
+                    </div>
+                    <div className="show_all_list" onClick={getAllListHandler}>
+                        <VscIssueReopened/>
+                    </div>
+                    <div className="form_handel_btn">
+                        <button className="form_open_Close_btn" onClick={todoFormOpenCloseHandler} >{!todoFormOpenState ? (<AiOutlinePlus/>): (<AiOutlineMinus/>)}</button>
+                    </div>
                 </div>
+                {/* <div className="from_collaps_button">
+                    <Form.Control className="searchByDateFilter" type="date" placeholder="search by date" value={searchByDate} onChange={searchByDateHandler} />
+                    <div className="show-all-list" onClick={getAllListHandler}><VscIssueReopened/></div>
+                    <Button className="from-open-close-btn" onClick={todoFormOpenCloseHandler} >{!todoFormOpenState ? (<AiOutlinePlus/>): (<AiOutlineMinus/>)}</Button>
+                </div> */}
                 <div className={`todoForm bg-secondary bg-gradient ${!todoFormOpenState?'form-close':'form-open'} `}>
                     <Form method="post" id="todo-form" onSubmit={todoFormSubmitHandler}>
                         <Form.Group className="mb-3">

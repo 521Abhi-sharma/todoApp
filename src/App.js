@@ -13,6 +13,12 @@ function App() {
   const [noteBookData,SetNoteBookData] = useState(getNoteBookDataFromLocalStorage);
   const [editNoteData, seteditNoteData] = useState({});
 
+
+  const getAllList =()=>{
+    const allList = localStorage.getItem('data')===null?[]:JSON.parse(localStorage.getItem('data'));
+    SetNoteBookData(allList);
+  }
+
   const noteBookDataAdd=(fromData)=>{
     
     SetNoteBookData((prevNoteBook)=>{
@@ -23,7 +29,8 @@ function App() {
   }
 
   const noteBookDataDelete=(noteBookId)=>{
-    const result = noteBookData.filter((item)=>{
+    const allList = localStorage.getItem('data')===null?[]:JSON.parse(localStorage.getItem('data'));
+    const result = allList.filter((item)=>{
       return item.id !== noteBookId;
     });
     let string = JSON.stringify(result)
@@ -110,7 +117,7 @@ function App() {
         minBreakpoint="xxs"
       >
         <Head />
-        <TodoFrom collectFormData={noteBookDataAdd} collectEditFormData={noteBookDataEdit} filterNOteBookData={filterNOteBookByDate} editNoteData={editNoteData}/>
+        <TodoFrom collectFormData={noteBookDataAdd} collectEditFormData={noteBookDataEdit} filterNOteBookData={filterNOteBookByDate} editNoteData={editNoteData} getAllList={getAllList}/>
         <TodosContainer list={noteBookData} onDeleteNote={noteBookDataDelete} onCompleteNote={completeNote} onUndoNote={undoNote} getNote={getNoteDataById} />
         <Footer/>
       </ThemeProvider>
