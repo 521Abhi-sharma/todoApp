@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState, useReducer} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ThemeProvider from 'react-bootstrap/ThemeProvider'
 import TodosContainer from './Component/TodosContainer';
@@ -7,73 +7,86 @@ import Footer from './Component/Footer';
 import TodoFrom from './Component/TodoForm';
 import "./App.css";
 
+const storeDataInLocalStorage=(string)=>{
+  localStorage.setItem('data',string);
+}
+
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "Add":
+      storeDataInLocalStorage(JSON.stringify([action.data, ...state]));
+      return [action.data, ...state];
+    case "Done" :
+      const doneResult = state.map((item)=>{
+        if(item.id === action.id){
+          return {...item, status:true};
+        }
+        return item;
+      });
+      storeDataInLocalStorage(JSON.stringify(doneResult));
+      return doneResult;
+    case "UnDone":
+      const UnDoneResult = state.map((item)=>{
+        if(item.id === action.id){
+          return {...item, status:false};
+        }
+        return item;
+      });
+      storeDataInLocalStorage(JSON.stringify(UnDoneResult));
+      return UnDoneResult;
+    case "Delete":
+      const deleteResult = state.filter((item)=>{
+        return item.id !== action.id;
+      });
+      storeDataInLocalStorage(JSON.stringify(deleteResult));
+      return deleteResult;
+    case "Edit" :
+      const editResult = state.map((item)=>{
+        if(item.id === action.editNoteDataId){
+          return {...item, title:action.data.title, date:action.data.date};
+        }
+        return item;
+      });
+      storeDataInLocalStorage(JSON.stringify(editResult));
+      return editResult;  
+    case "getAll" :
+      return state;
+    case "filter" :
+      return state.filter((item)=>{
+          return item.date === action.date;
+        });
+
+    default:
+      return state;
+  }
+};
+
 function App() {
   const getNoteBookDataFromLocalStorage = localStorage.getItem('data')===null?[]:JSON.parse(localStorage.getItem('data'));
-  console.log("null inisial data",getNoteBookDataFromLocalStorage);
-  const [noteBookData,SetNoteBookData] = useState(getNoteBookDataFromLocalStorage);
+  const [noteBookData, dispatch] = useReducer(reducer, getNoteBookDataFromLocalStorage);
   const [editNoteData, seteditNoteData] = useState({});
 
-
   const getAllList =()=>{
-    const allList = localStorage.getItem('data')===null?[]:JSON.parse(localStorage.getItem('data'));
-    SetNoteBookData(allList);
+    dispatch({ type: "getAll" });
   }
 
   const noteBookDataAdd=(fromData)=>{
-    
-    SetNoteBookData((prevNoteBook)=>{
-      let string = JSON.stringify([fromData, ...prevNoteBook])
-      localStorage.setItem('data',string);
-      return [fromData, ...prevNoteBook];
-    });
+    dispatch({ type: "Add", data:fromData });
   }
 
   const noteBookDataDelete=(noteBookId)=>{
-    const allList = localStorage.getItem('data')===null?[]:JSON.parse(localStorage.getItem('data'));
-    const result = allList.filter((item)=>{
-      return item.id !== noteBookId;
-    });
-    let string = JSON.stringify(result)
-    localStorage.setItem('data',string);
-    SetNoteBookData(result);
+    dispatch({ type: "Delete", id:noteBookId });
   }
 
   const completeNote =(noteBookId)=>{
-    const result = noteBookData.map((item)=>{
-      if(item.id === noteBookId){
-        return {...item, status:true};
-      }
-      return item;
-    });
-    let string = JSON.stringify(result)
-    localStorage.setItem('data',string);
-    SetNoteBookData(result);
+    dispatch({ type: "Done", id:noteBookId });
   }
 
   const undoNote =(noteBookId)=>{
-    const result = noteBookData.map((item)=>{
-      if(item.id === noteBookId){
-        return {...item, status:false};
-      }
-      return item;
-    });
-    let string = JSON.stringify(result)
-    localStorage.setItem('data',string);
-    SetNoteBookData(result);
+    dispatch({ type: "UnDone", id:noteBookId });
   }
 
-
-  
-
-  // const editNote =(noteBookId,formData)=>{
-  //   const result = noteBookData.map((item)=>{
-  //     if(item.id === noteBookId){
-  //       return {...item, formData};
-  //     }
-  //     return item;
-  //   });
-  //   SetNoteBookData(result);
-  // }
 
   const getNoteDataById =(noteBookId)=>{
     const result = noteBookData.find((item)=>{
@@ -86,29 +99,15 @@ function App() {
   }
 
   const noteBookDataEdit = (fromData) =>{
-    console.log('code is here',fromData);
-    console.log('edit hone wala data',editNoteData);
-    const result = noteBookData.map((item)=>{
-      if(item.id === editNoteData.id){
-        return {...item, title:fromData.title, date:fromData.date};
-      }
-      return item;
-    });
-    console.log(result);
-    let string = JSON.stringify(result)
-    localStorage.setItem('data',string);
-    SetNoteBookData(result);
+    dispatch({ type: "Edit", data:fromData, editNoteDataId : editNoteData.id  });
   }
-
-
 
   //here bugs 
   const filterNOteBookByDate=(Date)=>{
-    const result = noteBookData.filter((item)=>{
-      return item.date === Date;
-    });
-    SetNoteBookData(result);
+    dispatch({ type: "filter", date:Date });
   }
+
+
   return (
 
     <React.Fragment>
