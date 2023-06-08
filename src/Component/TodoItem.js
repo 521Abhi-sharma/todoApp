@@ -1,34 +1,26 @@
-import React , { useState } from "react";
+import React , { useState,useContext } from "react";
 import Button from 'react-bootstrap/Button';
 import { AiFillEdit,AiFillDelete } from "react-icons/ai";
 import { TfiCheck, TfiLoop} from "react-icons/tfi";
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { icon } from '@fortawesome/fontawesome-svg-core/import.macro';
 import Badge from 'react-bootstrap/Badge';
 import ModelCustom from '../uiComponent/ModelCustom';
+import { NotesContext } from "../App";
 function TodoItem(props) {
     const [deletePopupStatus, setDeletePopupStatus] = useState(false);
     const [selectedNoteId, setSelectedNoteId] = useState('');
+    const notesContextData = useContext(NotesContext);
+
     const closePopup = () => {
         setDeletePopupStatus(false);
     }
 
     const sucessPopup = () => {
         setDeletePopupStatus(false);
-        props.Delete(selectedNoteId);
-    }
-
-    const todoDone = (todoId) => {
-        props.Done(todoId);
-    }
-
-    const todoUndo =  (todoId) => {
-        props.Undo(todoId);
-        // console.log('code is here');
+        notesContextData.onDelete(selectedNoteId);
     }
 
     const todoEdit = (todoId) => {
-        props.getNoteData(todoId);
+        notesContextData.onEditGetNoteData(todoId);
     }
 
     const todoDelete = (todoId) => {
@@ -51,8 +43,8 @@ function TodoItem(props) {
                     <p className={props.listItem.status ? 'task-done' : 'fail'}>{props.listItem.title}</p>
                 </div>
                 <div className="item-btns">
-                    {!props.listItem.status? <Button className="done-btn" onClick={() => { todoDone(props.listItem.id) }}><TfiCheck/></Button>:
-                    <Button className="undo-btn" onClick={() => { todoUndo(props.listItem.id) }}><TfiLoop/></Button>
+                    {!props.listItem.status? <Button className="done-btn" onClick={() => { notesContextData.onDone(props.listItem.id) }}><TfiCheck/></Button>:
+                    <Button className="undo-btn" onClick={() => { notesContextData.onUndo(props.listItem.id) }}><TfiLoop/></Button>
                     }
                     {' '}
                     {!props.listItem.status? <Button className="edit-btn" onClick={() => { todoEdit(props.listItem.id) }} ><AiFillEdit/></Button>:''}

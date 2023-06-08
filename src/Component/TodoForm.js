@@ -1,12 +1,10 @@
-import React,{useState,useEffect} from "react";
+import React,{useState,useEffect,useContext} from "react";
 import Button from 'react-bootstrap/Button';
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { VscIssueReopened } from "react-icons/vsc";
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { icon } from '@fortawesome/fontawesome-svg-core/import.macro';
-
 import Form from 'react-bootstrap/Form';
-function TodoForm(props) {
+import { NotesContext } from "../App";
+function TodoForm() {
     const initialInputData = {title:'', date:'', status:false};
     const initialErrorMessage = {};
     const [inputData,setInputData]=useState(initialInputData);
@@ -16,15 +14,19 @@ function TodoForm(props) {
     const [searchByDate, setSearchByDate]= useState('');
     const [editForm, setEditForm] = useState(false);
 
+    const notesContextData = useContext(NotesContext);
+    const editableFormData = notesContextData.EditableFormData;
+    
+
     useEffect(() => {
-        if (Object.keys(props.editNoteData).length > 0) {
+        if (Object.keys(editableFormData).length > 0) {
             setEditForm(true);
             setTodoFormOpenState(true);  
             setInputData((prev)=>{
-                return {...prev, title:props.editNoteData.title,date:props.editNoteData.date};
+                return {...prev, title:editableFormData.title,date:editableFormData.date};
             });
         }
-      }, [props.editNoteData]);
+      }, [editableFormData]);
     
 
 
@@ -47,6 +49,7 @@ function TodoForm(props) {
         });
         // console.log(inputData);
     }
+
     const todoFormSubmitHandler = (event)=>{
         event.preventDefault();
         formValidation(inputData);
@@ -55,13 +58,13 @@ function TodoForm(props) {
 
     useEffect(() => {
         if (Object.keys(errorMessage).length === 0 && formIsSubmit && !editForm) {
-            props.collectFormData({...inputData, id:new Date().valueOf()});
+            notesContextData.onAdd({...inputData, id:new Date().valueOf()});
             setInputData(initialInputData);
             setTodoFormOpenState(false); //close the form
         }
 
         if (Object.keys(errorMessage).length === 0 && formIsSubmit && editForm) {
-            props.collectEditFormData(inputData);
+            notesContextData.onEdit(inputData);
             setEditForm(false);
             setInputData(initialInputData);
             setTodoFormOpenState(false); //close the form
@@ -82,12 +85,12 @@ function TodoForm(props) {
 
     const searchByDateHandler=(event)=>{
         setSearchByDate(event.target.value);
-        props.filterNOteBookData(event.target.value);
+        notesContextData.onFilter(event.target.value);
     }
 
     const getAllListHandler=()=>{
         setSearchByDate('');
-        props.getAllList();
+        notesContextData.onRefresh();
     }
 
     return (
@@ -104,11 +107,7 @@ function TodoForm(props) {
                         <button className="form_open_Close_btn" onClick={todoFormOpenCloseHandler} >{!todoFormOpenState ? (<AiOutlinePlus/>): (<AiOutlineMinus/>)}</button>
                     </div>
                 </div>
-                {/* <div className="from_collaps_button">
-                    <Form.Control className="searchByDateFilter" type="date" placeholder="search by date" value={searchByDate} onChange={searchByDateHandler} />
-                    <div className="show-all-list" onClick={getAllListHandler}><VscIssueReopened/></div>
-                    <Button className="from-open-close-btn" onClick={todoFormOpenCloseHandler} >{!todoFormOpenState ? (<AiOutlinePlus/>): (<AiOutlineMinus/>)}</Button>
-                </div> */}
+                
                 <div className={`todoForm bg-secondary bg-gradient ${!todoFormOpenState?'form-close':'form-open'} `}>
                     <Form method="post" id="todo-form" onSubmit={todoFormSubmitHandler}>
                         <Form.Group className="mb-3">

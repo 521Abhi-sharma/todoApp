@@ -1,4 +1,4 @@
-import React,{useState, useReducer} from 'react';
+import React,{useState, useReducer , createContext} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ThemeProvider from 'react-bootstrap/ThemeProvider'
 import TodosContainer from './Component/TodosContainer';
@@ -62,6 +62,8 @@ const reducer = (state, action) => {
   }
 };
 
+export const NotesContext = createContext();
+
 function App() {
   const getNoteBookDataFromLocalStorage = localStorage.getItem('data')===null?[]:JSON.parse(localStorage.getItem('data'));
   const [noteBookData, dispatch] = useReducer(reducer, getNoteBookDataFromLocalStorage);
@@ -107,20 +109,31 @@ function App() {
     dispatch({ type: "filter", date:Date });
   }
 
-
   return (
-
-    <React.Fragment>
+    <NotesContext.Provider value={
+      {
+        notes:noteBookData,
+        onAdd:noteBookDataAdd,
+        onEditGetNoteData:getNoteDataById,
+        onDone:completeNote,
+        onEdit:noteBookDataEdit,
+        EditableFormData:editNoteData,
+        onUndo:undoNote,
+        onDelete:noteBookDataDelete,
+        onRefresh:getAllList,
+        onFilter:filterNOteBookByDate
+      }
+      }>
       <ThemeProvider
         breakpoints={['xxxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}
         minBreakpoint="xxs"
       >
         <Head />
         <TodoFrom collectFormData={noteBookDataAdd} collectEditFormData={noteBookDataEdit} filterNOteBookData={filterNOteBookByDate} editNoteData={editNoteData} getAllList={getAllList}/>
-        <TodosContainer list={noteBookData} onDeleteNote={noteBookDataDelete} onCompleteNote={completeNote} onUndoNote={undoNote} getNote={getNoteDataById} />
+        <TodosContainer />
         <Footer/>
       </ThemeProvider>
-    </React.Fragment>
+    </NotesContext.Provider>
   );
 }
 
