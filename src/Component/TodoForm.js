@@ -22,6 +22,7 @@ function TodoForm() {
         if (Object.keys(editableFormData).length > 0) {
             setEditForm(true);
             setTodoFormOpenState(true);  
+            setSearchByDate('');
             setInputData((prev)=>{
                 return {...prev, title:editableFormData.title,date:editableFormData.date};
             });
@@ -31,6 +32,11 @@ function TodoForm() {
 
 
     const todoFormOpenCloseHandler=()=>{
+        
+        if(searchByDate){
+            setSearchByDate('');
+        }
+        
         if(!todoFormOpenState){
             setTodoFormOpenState(true);
         }
@@ -90,6 +96,7 @@ function TodoForm() {
 
     const getAllListHandler=()=>{
         setSearchByDate('');
+        setTodoFormOpenState(false); 
         notesContextData.onRefresh();
     }
 

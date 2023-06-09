@@ -10,13 +10,11 @@ import "./App.css";
 const storeDataInLocalStorage=(string)=>{
   localStorage.setItem('data',string);
 }
-
-
 const reducer = (state, action) => {
   switch (action.type) {
     case "Add":
-      storeDataInLocalStorage(JSON.stringify([action.data, ...state]));
-      return [action.data, ...state];
+      storeDataInLocalStorage(JSON.stringify([action.data, ...action.storageData]));
+      return [action.data, ...action.storageData];
     case "Done" :
       const doneResult = state.map((item)=>{
         if(item.id === action.id){
@@ -42,7 +40,7 @@ const reducer = (state, action) => {
       storeDataInLocalStorage(JSON.stringify(deleteResult));
       return deleteResult;
     case "Edit" :
-      const editResult = state.map((item)=>{
+      const editResult = action.storageData.map((item)=>{
         if(item.id === action.editNoteDataId){
           return {...item, title:action.data.title, date:action.data.date};
         }
@@ -51,12 +49,12 @@ const reducer = (state, action) => {
       storeDataInLocalStorage(JSON.stringify(editResult));
       return editResult;  
     case "getAll" :
-      return state;
+      return action.storageData;
     case "filter" :
-      return state.filter((item)=>{
-          return item.date === action.date;
-        });
-
+      const filterResult = action.storageData.filter((item)=>{
+        return item.date === action.date;
+      });
+      return filterResult;
     default:
       return state;
   }
@@ -70,11 +68,11 @@ function App() {
   const [editNoteData, seteditNoteData] = useState({});
 
   const getAllList =()=>{
-    dispatch({ type: "getAll" });
+    dispatch({ type: "getAll" ,storageData:getNoteBookDataFromLocalStorage});
   }
 
   const noteBookDataAdd=(fromData)=>{
-    dispatch({ type: "Add", data:fromData });
+    dispatch({ type: "Add",storageData:getNoteBookDataFromLocalStorage, data:fromData });
   }
 
   const noteBookDataDelete=(noteBookId)=>{
@@ -91,7 +89,7 @@ function App() {
 
 
   const getNoteDataById =(noteBookId)=>{
-    const result = noteBookData.find((item)=>{
+    const result = getNoteBookDataFromLocalStorage.find((item)=>{
       return item.id===noteBookId;
     });
 
@@ -101,12 +99,11 @@ function App() {
   }
 
   const noteBookDataEdit = (fromData) =>{
-    dispatch({ type: "Edit", data:fromData, editNoteDataId : editNoteData.id  });
+    dispatch({ type: "Edit",storageData:getNoteBookDataFromLocalStorage, data:fromData, editNoteDataId : editNoteData.id  });
   }
 
-  //here bugs 
   const filterNOteBookByDate=(Date)=>{
-    dispatch({ type: "filter", date:Date });
+    dispatch({ type: "filter",storageData:getNoteBookDataFromLocalStorage, date:Date});
   }
 
   return (
