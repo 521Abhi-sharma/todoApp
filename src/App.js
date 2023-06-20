@@ -67,6 +67,10 @@ function App() {
   const [noteBookData, dispatch] = useReducer(reducer, getNoteBookDataFromLocalStorage);
   const [editNoteData, seteditNoteData] = useState({});
 
+  console.log("state data",noteBookData);
+  console.log("storage data",getNoteBookDataFromLocalStorage);
+
+
   const getAllList =()=>{
     dispatch({ type: "getAll" ,storageData:getNoteBookDataFromLocalStorage});
   }

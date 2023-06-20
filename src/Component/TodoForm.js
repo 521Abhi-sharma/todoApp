@@ -64,7 +64,7 @@ function TodoForm() {
 
     useEffect(() => {
         if (Object.keys(errorMessage).length === 0 && formIsSubmit && !editForm) {
-            notesContextData.onAdd({...inputData, id:new Date().valueOf()});
+            notesContextData.onAdd({...inputData, id:new Date().getTime()});  
             setInputData(initialInputData);
             setTodoFormOpenState(false); //close the form
         }
