@@ -4,7 +4,9 @@ import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { VscIssueReopened } from "react-icons/vsc";
 import Form from 'react-bootstrap/Form';
 import { NotesContext } from "../App";
+import { v4 as uuid } from 'uuid';
 function TodoForm() {
+    const unique_id = uuid();
     const initialInputData = {title:'', date:'', status:false};
     const initialErrorMessage = {};
     const [inputData,setInputData]=useState(initialInputData);
@@ -64,7 +66,7 @@ function TodoForm() {
 
     useEffect(() => {
         if (Object.keys(errorMessage).length === 0 && formIsSubmit && !editForm) {
-            notesContextData.onAdd({...inputData, id:new Date().getTime()});  
+            notesContextData.onAdd({...inputData, id:unique_id});  
             setInputData(initialInputData);
             setTodoFormOpenState(false); //close the form
         }
