@@ -83,10 +83,10 @@ function TodoForm() {
     const formValidation =(formData)=>{
         const errorMessageBag ={};
         if(formData.date === ''){
-            errorMessageBag.date="date is required";
+            errorMessageBag.date="Date is required";
         }
         if(formData.title === ''){
-            errorMessageBag.title="title is required";
+            errorMessageBag.title="Title is required";
         }
         setErrorMessage(errorMessageBag); 
     }

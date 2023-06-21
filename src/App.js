@@ -13,8 +13,10 @@ const storeDataInLocalStorage=(string)=>{
 const reducer = (state, action) => {
   switch (action.type) {
     case "Add":
-      storeDataInLocalStorage(JSON.stringify([action.data, ...action.storageData]));
-      return [action.data, ...action.storageData];
+      // storeDataInLocalStorage(JSON.stringify([action.data, ...action.storageData]));
+      // return [action.data, ...action.storageData];
+      storeDataInLocalStorage(JSON.stringify([action.data, ...state]));
+      return [action.data, ...state];
     case "Done" :
       const doneResult = state.map((item)=>{
         if(item.id === action.id){
@@ -76,6 +78,7 @@ function App() {
   }
 
   const noteBookDataAdd=(fromData)=>{
+    dispatch({ type: "getAll" ,storageData:getNoteBookDataFromLocalStorage});
     dispatch({ type: "Add",storageData:getNoteBookDataFromLocalStorage, data:fromData });
   }
 
