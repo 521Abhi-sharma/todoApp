@@ -70,7 +70,7 @@ function TodoForm() {
         }
 
         if (Object.keys(errorMessage).length === 0 && formIsSubmit && editForm) {
-            notesContextData.onEdit(inputData);
+            notesContextData.onSubmitEditData(inputData);
             setEditForm(false);
             setInputData(initialInputData);
             setTodoFormOpenState(false); //close the form

@@ -19,9 +19,9 @@ function TodoItem(props) {
         notesContextData.onDelete(selectedNoteId);
     }
 
-    const todoEdit = (todoId) => {
-        notesContextData.onEditGetNoteData(todoId);
-    }
+    // const todoEdit = (todoId) => {
+    //     notesContextData.onEditGetNoteData(todoId);
+    // }
 
     const todoDelete = (todoId) => {
         setSelectedNoteId(todoId);
@@ -43,11 +43,11 @@ function TodoItem(props) {
                     <p className={props.listItem.status ? 'task-done' : 'fail'}>{props.listItem.title}</p>
                 </div>
                 <div className="item-btns">
-                    {!props.listItem.status? <Button className="done-btn" onClick={() => { notesContextData.onDone(props.listItem.id) }}><TfiCheck/></Button>:
-                    <Button className="undo-btn" onClick={() => { notesContextData.onUndo(props.listItem.id) }}><TfiLoop/></Button>
+                    {!props.listItem.status? <Button className="done-btn" onClick={() => { notesContextData.onDone(props.listItem) }}><TfiCheck/></Button>:
+                    <Button className="undo-btn" onClick={() => { notesContextData.onUndo(props.listItem) }}><TfiLoop/></Button>
                     }
                     {' '}
-                    {!props.listItem.status? <Button className="edit-btn" onClick={() => { todoEdit(props.listItem.id) }} ><AiFillEdit/></Button>:''}
+                    {!props.listItem.status? <Button className="edit-btn" onClick={() => { notesContextData.onEdit(props.listItem) }} ><AiFillEdit/></Button>:''}
                     {' '}
                     <Button className="delete-btn" onClick={() => { todoDelete(props.listItem.id) }} ><AiFillDelete/></Button>
                 </div>
