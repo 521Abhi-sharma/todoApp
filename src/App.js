@@ -75,7 +75,6 @@ const reducer = (state, action) => {
         }
         return item;
       });
-
       return editResult;
     case "filter":
       const filterResult = state.filter((item) => {
@@ -105,24 +104,24 @@ function App() {
 
 
   const noteBookDataAdd = async (fromData) => {
-    const response =await AddDataUsingApi(fromData);
+    const response = await AddDataUsingApi(fromData);
     dispatch({ type: "Add", Data: response.data });
   }
 
   const noteBookDataDelete = (noteBookId) => {
     deleteDataUsingApi(noteBookId);  // call api for delete data from server
-    dispatch({ type: "Delete", id:noteBookId });   // here update state
+    dispatch({ type: "Delete", id: noteBookId });   // here update state
   }
 
   const completeNote = (note) => {
-    const noteBookId= note.id;
+    const noteBookId = note.id;
     note.status = true;
     updateDataUsingApi(noteBookId, note);
     dispatch({ type: "Done", id: noteBookId });
   }
 
   const undoNote = (note) => {
-    const noteBookId= note.id;
+    const noteBookId = note.id;
     note.status = false;
     updateDataUsingApi(noteBookId, note);
     dispatch({ type: "UnDone", id: noteBookId });
@@ -137,9 +136,9 @@ function App() {
   const submitEditData = (formData) => {
     const editNoteId = editNoteData.id;
     updateDataUsingApi(editNoteId, formData);
-    dispatch({ type: "Edit", data: formData, editNoteDataId: editNoteId});
+    dispatch({ type: "Edit", data: formData, editNoteDataId: editNoteId });
   }
-  
+
 
   const filterNOteBookByDate = (Date) => {
     dispatch({ type: "filter", date: Date });
@@ -152,7 +151,7 @@ function App() {
         onAdd: noteBookDataAdd,
         onDone: completeNote,
         onEdit: noteBookDataEdit,
-        onSubmitEditData : submitEditData,
+        onSubmitEditData: submitEditData,
         EditableFormData: editNoteData,
         onUndo: undoNote,
         onDelete: noteBookDataDelete,
@@ -160,12 +159,12 @@ function App() {
         onFilter: filterNOteBookByDate
       }
     }>
-      
-        <Head />
-        <TodoFrom />
-        <TodosContainer />
-        <Footer />
-      
+
+      <Head />
+      <TodoFrom />
+      <TodosContainer />
+      <Footer />
+
     </NotesContext.Provider>
   );
 }
