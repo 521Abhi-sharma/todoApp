@@ -19,10 +19,6 @@ function TodoItem(props) {
         notesContextData.onDelete(selectedNoteId);
     }
 
-    // const todoEdit = (todoId) => {
-    //     notesContextData.onEditGetNoteData(todoId);
-    // }
-
     const todoDelete = (todoId) => {
         setSelectedNoteId(todoId);
         setDeletePopupStatus(true);
