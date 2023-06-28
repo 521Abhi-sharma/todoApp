@@ -105,6 +105,7 @@ function App() {
 
   const noteBookDataAdd = async (fromData) => {
     const response = await AddDataUsingApi(fromData);
+    getAllList();
     dispatch({ type: "Add", Data: response.data });
   }
 
