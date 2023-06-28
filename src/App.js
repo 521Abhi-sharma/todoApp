@@ -1,59 +1,83 @@
-import React,{useState, useReducer , createContext} from 'react';
+import React, { useState, useReducer, createContext, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import ThemeProvider from 'react-bootstrap/ThemeProvider'
 import TodosContainer from './Component/TodosContainer';
 import Head from './Component/Header';
 import Footer from './Component/Footer';
 import TodoFrom from './Component/TodoForm';
 import "./App.css";
+import axios from "axios";
 
-const storeDataInLocalStorage=(string)=>{
-  localStorage.setItem('data',string);
+const baseURL = "http://localhost:3030/notes";
+
+
+const getDataFromApi = async () => {
+  const res = await axios.get(baseURL);
+  return res;
 }
+
+const AddDataUsingApi = async (data) => {
+  const result = await axios.post(baseURL, {
+    title: data.title,
+    status: data.status,
+    date: data.date
+  });
+  return result;
+}
+
+const deleteDataUsingApi = async (id) => {
+  const url = `${baseURL}/${id}`;
+  const result = await axios.delete(url);
+  return result;
+}
+
+const updateDataUsingApi = async (id, data) => {
+  const url = `${baseURL}/${id}`;
+  const result = await axios.put(url, {
+    title: data.title,
+    status: data.status,
+    date: data.date
+  });
+  return result;
+}
+
+
 const reducer = (state, action) => {
   switch (action.type) {
+    case "init":
+      return action.Data;
     case "Add":
-      // storeDataInLocalStorage(JSON.stringify([action.data, ...action.storageData]));
-      // return [action.data, ...action.storageData];
-      storeDataInLocalStorage(JSON.stringify([action.data, ...state]));
-      return [action.data, ...state];
-    case "Done" :
-      const doneResult = state.map((item)=>{
-        if(item.id === action.id){
-          return {...item, status:true};
+      return [...state, action.Data];
+    case "Done":
+      const doneResult = state.map((item) => {
+        if (item.id === action.id) {
+          return { ...item, status: true };
         }
         return item;
       });
-      storeDataInLocalStorage(JSON.stringify(doneResult));
       return doneResult;
     case "UnDone":
-      const UnDoneResult = state.map((item)=>{
-        if(item.id === action.id){
-          return {...item, status:false};
+      const UnDoneResult = state.map((item) => {
+        if (item.id === action.id) {
+          return { ...item, status: false };
         }
         return item;
       });
-      storeDataInLocalStorage(JSON.stringify(UnDoneResult));
       return UnDoneResult;
     case "Delete":
-      const deleteResult = state.filter((item)=>{
+      const deleteResult = state.filter((item) => {
         return item.id !== action.id;
       });
-      storeDataInLocalStorage(JSON.stringify(deleteResult));
       return deleteResult;
-    case "Edit" :
-      const editResult = action.storageData.map((item)=>{
-        if(item.id === action.editNoteDataId){
-          return {...item, title:action.data.title, date:action.data.date};
+    case "Edit":
+      const editResult = state.map((item) => {
+        if (item.id === action.editNoteDataId) {
+          return { ...item, title: action.data.title, date: action.data.date };
         }
         return item;
       });
-      storeDataInLocalStorage(JSON.stringify(editResult));
-      return editResult;  
-    case "getAll" :
-      return action.storageData;
-    case "filter" :
-      const filterResult = action.storageData.filter((item)=>{
+      return editResult;
+    case "filter":
+      const filterResult = state.filter((item) => {
         return item.date === action.date;
       });
       return filterResult;
@@ -65,78 +89,83 @@ const reducer = (state, action) => {
 export const NotesContext = createContext();
 
 function App() {
-  const getNoteBookDataFromLocalStorage = localStorage.getItem('data')===null?[]:JSON.parse(localStorage.getItem('data'));
-  const [noteBookData, dispatch] = useReducer(reducer, getNoteBookDataFromLocalStorage);
+  const [noteBookData, dispatch] = useReducer(reducer, []);
   const [editNoteData, seteditNoteData] = useState({});
+  console.log('state data', noteBookData);
 
-  console.log("state data",noteBookData);
-  console.log("storage data",getNoteBookDataFromLocalStorage);
-
-
-  const getAllList =()=>{
-    dispatch({ type: "getAll" ,storageData:getNoteBookDataFromLocalStorage});
+  const getAllList = async () => {
+    const response = await getDataFromApi();
+    dispatch({ type: "init", Data: response.data });
   }
 
-  const noteBookDataAdd=(fromData)=>{
-    dispatch({ type: "getAll" ,storageData:getNoteBookDataFromLocalStorage});
-    dispatch({ type: "Add",storageData:getNoteBookDataFromLocalStorage, data:fromData });
+  useEffect(() => {
+    getAllList();
+  }, []);
+
+
+  const noteBookDataAdd = async (fromData) => {
+    const response = await AddDataUsingApi(fromData);
+    getAllList();
+    dispatch({ type: "Add", Data: response.data });
   }
 
-  const noteBookDataDelete=(noteBookId)=>{
-    dispatch({ type: "Delete", id:noteBookId });
+  const noteBookDataDelete = (noteBookId) => {
+    deleteDataUsingApi(noteBookId);  // call api for delete data from server
+    dispatch({ type: "Delete", id: noteBookId });   // here update state
   }
 
-  const completeNote =(noteBookId)=>{
-    dispatch({ type: "Done", id:noteBookId });
+  const completeNote = (note) => {
+    const noteBookId = note.id;
+    note.status = true;
+    updateDataUsingApi(noteBookId, note);
+    dispatch({ type: "Done", id: noteBookId });
   }
 
-  const undoNote =(noteBookId)=>{
-    dispatch({ type: "UnDone", id:noteBookId });
+  const undoNote = (note) => {
+    const noteBookId = note.id;
+    note.status = false;
+    updateDataUsingApi(noteBookId, note);
+    dispatch({ type: "UnDone", id: noteBookId });
   }
 
-
-  const getNoteDataById =(noteBookId)=>{
-    const result = getNoteBookDataFromLocalStorage.find((item)=>{
-      return item.id===noteBookId;
+  const noteBookDataEdit = (note) => {
+    seteditNoteData((prev) => {
+      return { ...prev, id: note.id, status: note.status, title: note.title, date: note.date };
     });
-
-    seteditNoteData((prev)=>{
-      return {...prev,  id:result.id, status:result.status, title:result.title, date:result.date };
-    });
   }
 
-  const noteBookDataEdit = (fromData) =>{
-    dispatch({ type: "Edit",storageData:getNoteBookDataFromLocalStorage, data:fromData, editNoteDataId : editNoteData.id  });
+  const submitEditData = (formData) => {
+    const editNoteId = editNoteData.id;
+    updateDataUsingApi(editNoteId, formData);
+    dispatch({ type: "Edit", data: formData, editNoteDataId: editNoteId });
   }
 
-  const filterNOteBookByDate=(Date)=>{
-    dispatch({ type: "filter",storageData:getNoteBookDataFromLocalStorage, date:Date});
+
+  const filterNOteBookByDate = (Date) => {
+    dispatch({ type: "filter", date: Date });
   }
 
   return (
     <NotesContext.Provider value={
       {
-        notes:noteBookData,
-        onAdd:noteBookDataAdd,
-        onEditGetNoteData:getNoteDataById,
-        onDone:completeNote,
-        onEdit:noteBookDataEdit,
-        EditableFormData:editNoteData,
-        onUndo:undoNote,
-        onDelete:noteBookDataDelete,
-        onRefresh:getAllList,
-        onFilter:filterNOteBookByDate
+        notes: noteBookData,
+        onAdd: noteBookDataAdd,
+        onDone: completeNote,
+        onEdit: noteBookDataEdit,
+        onSubmitEditData: submitEditData,
+        EditableFormData: editNoteData,
+        onUndo: undoNote,
+        onDelete: noteBookDataDelete,
+        onRefresh: getAllList,
+        onFilter: filterNOteBookByDate
       }
-      }>
-      <ThemeProvider
-        breakpoints={['xxxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}
-        minBreakpoint="xxs"
-      >
-        <Head />
-        <TodoFrom collectFormData={noteBookDataAdd} collectEditFormData={noteBookDataEdit} filterNOteBookData={filterNOteBookByDate} editNoteData={editNoteData} getAllList={getAllList}/>
-        <TodosContainer />
-        <Footer/>
-      </ThemeProvider>
+    }>
+
+      <Head />
+      <TodoFrom />
+      <TodosContainer />
+      <Footer />
+
     </NotesContext.Provider>
   );
 }

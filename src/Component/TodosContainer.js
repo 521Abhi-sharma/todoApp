@@ -5,13 +5,16 @@ import { NotesContext } from "../App";
 
 function TodosContainer() {
   const notesContextData = useContext(NotesContext);
-
+  const data = [...notesContextData.notes].reverse();
+  // console.log('order right as it is',notesContextData.notes);
+  // console.log('reverse',data);
   return (
     <React.Fragment>
       <div className="todolistContainer">
         <Stack gap={3}>
           {
-            notesContextData.notes.map((item, index) =>
+            
+            data.map((item, index) =>
               <TodoItem key={index} listItem={item} />
             )
           }
