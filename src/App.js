@@ -102,6 +102,8 @@ export const NotesContext = createContext();
 function App() {
   const [noteBookData, dispatch] = useReducer(reducer, []);
   const [editNoteData, seteditNoteData] = useState({});
+  const [timeTracker, setTimeTracker] = useState('00:00:00');
+  
   console.log('state data', noteBookData);
 
   const getAllList = async () => {
@@ -110,9 +112,81 @@ function App() {
   }
 
   useEffect(() => {
+    removeDataFromServerInEvery5mint();
     getAllList();
   }, []);
 
+  // delete functionality automatically START
+  
+  const removeDataFromServerInEvery5mint = async () => {
+    console.log('delete functionality running');
+  };
+
+  
+  //end
+
+  // abhi code  time
+  //step1: make deadline
+  const getDealLineTime=()=>{
+    // in this funciton i have added mint for making deadline
+    let deadline = new Date();
+    console.log('time',deadline);
+    // deadline.setSeconds(deadline.getSeconds() + 10);
+    deadline.setMinutes(deadline.getMinutes() + 1);
+    console.log('time after add time',deadline);
+    return deadline;
+  }
+
+  //step 2 : make a function that return remaining time
+  const getTimeRemaining = (e) => {
+    const total = Date.parse(e) - Date.parse(new Date());
+    const seconds = Math.floor((total / 1000) % 60);
+    const minutes = Math.floor((total / 1000 / 60) % 60);
+    const hours = Math.floor((total / 1000 / 60 / 60) % 24);
+    return {
+        total, hours, minutes, seconds
+    };
+  }
+
+  // step 3:make a function that update tracker time
+  const startTimer = (e) => {
+    let { total, hours, minutes, seconds }
+                = getTimeRemaining(e);
+    // console.log('total',total);
+    if (total >= 0) {
+
+        // update the timer
+        // check if less than 10 then we need to
+        // add '0' at the beginning of the variable
+        setTimeTracker(
+            (hours > 9 ? hours : '0' + hours) + ':' +
+            (minutes > 9 ? minutes : '0' + minutes) + ':'
+            + (seconds > 9 ? seconds : '0' + seconds)
+        )
+    }
+    if(total=== 0){
+      trackerAction();
+      // console.log('here run again');
+    }
+  }
+
+  // step 5 make a fnction that trigger timmerFunctionality
+  const trackerAction =()=>{
+    const deadline = getDealLineTime();
+    const timer =setInterval(() => {
+      startTimer(deadline);
+    }, 1000);
+    // clearTimeout(timer);
+  }
+
+
+  useEffect(() => {
+    trackerAction();
+  },[]);
+  
+  // abhi code end
+
+  // ================END==========
 
   const noteBookDataAdd = async (fromData) => {
     const response = await AddDataUsingApi(fromData);
@@ -191,7 +265,7 @@ function App() {
         draggable
         pauseOnHover
       />
-      <Head />
+      <Head timeTracker={timeTracker}/>
       <TodoFrom />
       <TodosContainer />
       <Footer />
