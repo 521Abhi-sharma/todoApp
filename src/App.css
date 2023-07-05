@@ -214,3 +214,13 @@ button.form_open_Close_btn {
   cursor: pointer;
   background-color: #c4c4c4;
 }
+
+
+.item_not_found {
+  display: flex;
+  justify-content: center;
+  text-transform: uppercase;
+  border: 1px solid white;
+  background: black;
+  color: white;
+}

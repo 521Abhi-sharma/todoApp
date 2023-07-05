@@ -6,8 +6,11 @@ import Footer from './Component/Footer';
 import TodoFrom from './Component/TodoForm';
 import "./App.css";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const baseURL = "http://localhost:3030/notes";
+// const baseURL = "http://localhost:3030/notes";
+const baseURL ="https://todo-app-server-3c0p.onrender.com/notes";
 
 
 const getDataFromApi = async () => {
@@ -40,14 +43,22 @@ const updateDataUsingApi = async (id, data) => {
   return result;
 }
 
+const filterDataUsingApi = async (date) => {
+  const url = `${baseURL}?date=${date}`;
+  const result = await axios.get(url);
+  return result;
+}
+
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "init":
       return action.Data;
     case "Add":
+      
       return [...state, action.Data];
     case "Done":
+      
       const doneResult = state.map((item) => {
         if (item.id === action.id) {
           return { ...item, status: true };
@@ -56,6 +67,7 @@ const reducer = (state, action) => {
       });
       return doneResult;
     case "UnDone":
+      
       const UnDoneResult = state.map((item) => {
         if (item.id === action.id) {
           return { ...item, status: false };
@@ -64,11 +76,13 @@ const reducer = (state, action) => {
       });
       return UnDoneResult;
     case "Delete":
+      
       const deleteResult = state.filter((item) => {
         return item.id !== action.id;
       });
       return deleteResult;
     case "Edit":
+      
       const editResult = state.map((item) => {
         if (item.id === action.editNoteDataId) {
           return { ...item, title: action.data.title, date: action.data.date };
@@ -77,10 +91,7 @@ const reducer = (state, action) => {
       });
       return editResult;
     case "filter":
-      const filterResult = state.filter((item) => {
-        return item.date === action.date;
-      });
-      return filterResult;
+      return action.data;
     default:
       return state;
   }
@@ -105,12 +116,13 @@ function App() {
 
   const noteBookDataAdd = async (fromData) => {
     const response = await AddDataUsingApi(fromData);
-    getAllList();
+    toast.success('Item added');
     dispatch({ type: "Add", Data: response.data });
   }
 
   const noteBookDataDelete = (noteBookId) => {
     deleteDataUsingApi(noteBookId);  // call api for delete data from server
+    toast.success('Item deleted');
     dispatch({ type: "Delete", id: noteBookId });   // here update state
   }
 
@@ -118,6 +130,7 @@ function App() {
     const noteBookId = note.id;
     note.status = true;
     updateDataUsingApi(noteBookId, note);
+    toast.success('Item updated');
     dispatch({ type: "Done", id: noteBookId });
   }
 
@@ -125,6 +138,7 @@ function App() {
     const noteBookId = note.id;
     note.status = false;
     updateDataUsingApi(noteBookId, note);
+    toast.success('Item updated');
     dispatch({ type: "UnDone", id: noteBookId });
   }
 
@@ -137,12 +151,18 @@ function App() {
   const submitEditData = (formData) => {
     const editNoteId = editNoteData.id;
     updateDataUsingApi(editNoteId, formData);
+    toast.success('Item updated');
     dispatch({ type: "Edit", data: formData, editNoteDataId: editNoteId });
   }
 
 
-  const filterNOteBookByDate = (Date) => {
-    dispatch({ type: "filter", date: Date });
+  const filterNOteBookByDate = async (Date) => {
+    if(!Date){
+      getAllList();
+      return;
+    }
+    const response = await filterDataUsingApi(Date);
+    dispatch({ type: "filter", data:response.data });
   }
 
   return (
@@ -160,7 +180,17 @@ function App() {
         onFilter: filterNOteBookByDate
       }
     }>
-
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Head />
       <TodoFrom />
       <TodosContainer />

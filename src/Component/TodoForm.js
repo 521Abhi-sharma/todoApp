@@ -4,9 +4,9 @@ import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { VscIssueReopened } from "react-icons/vsc";
 import Form from 'react-bootstrap/Form';
 import { NotesContext } from "../App";
-import { v4 as uuid } from 'uuid';
+
 function TodoForm() {
-    const unique_id = uuid();
+    
     const initialInputData = {title:'', date:'', status:false};
     const initialErrorMessage = {};
     const [inputData,setInputData]=useState(initialInputData);
@@ -18,7 +18,6 @@ function TodoForm() {
 
     const notesContextData = useContext(NotesContext);
     const editableFormData = notesContextData.EditableFormData;
-    
 
     useEffect(() => {
         if (Object.keys(editableFormData).length > 0) {
@@ -34,7 +33,7 @@ function TodoForm() {
 
 
     const todoFormOpenCloseHandler=()=>{
-        
+        notesContextData.onRefresh();
         if(searchByDate){
             setSearchByDate('');
         }
@@ -43,6 +42,10 @@ function TodoForm() {
             setTodoFormOpenState(true);
         }
         if(todoFormOpenState){
+            if(editForm){
+                setInputData(initialInputData);
+                // console.log('now free form');
+            }
             setTodoFormOpenState(false);
         }
     }
@@ -66,7 +69,7 @@ function TodoForm() {
 
     useEffect(() => {
         if (Object.keys(errorMessage).length === 0 && formIsSubmit && !editForm) {
-            notesContextData.onAdd({...inputData, id:unique_id});  
+            notesContextData.onAdd({...inputData});  
             setInputData(initialInputData);
             setTodoFormOpenState(false); //close the form
         }
