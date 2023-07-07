@@ -9,7 +9,6 @@ function Header({timeTracker}) {
         <Navbar.Brand href="#home">
           NoteBook
         </Navbar.Brand>
-        <p className="time">{timeTracker}</p>
          
       </Container>
     </Navbar>
