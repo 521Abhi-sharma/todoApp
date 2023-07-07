@@ -112,7 +112,7 @@ function TodoForm() {
                 <div className="list_action_container">
                     <div className="search_list">
                         <Form.Control className="filterListByDate" type="date"  value={searchByDate} onChange={searchByDateHandler} /> 
-                        <p>filter by date</p>
+                        {/* <p>filter by date</p> */}
                     </div>
                     <div className="show_all_list" onClick={getAllListHandler}>
                         <VscIssueReopened/>
