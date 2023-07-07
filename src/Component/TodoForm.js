@@ -43,6 +43,7 @@ function TodoForm() {
         }
         if(todoFormOpenState){
             if(editForm){
+                setEditForm(false);
                 setInputData(initialInputData);
                 // console.log('now free form');
             }
@@ -136,7 +137,7 @@ function TodoForm() {
                             <span className="error-msg">{errorMessage.title}</span>
                         </Form.Group>
                         <Button className="todo-form-submit" variant="primary" type="submit">
-                           {editForm?'Edit':'Submit'} 
+                           {editForm?'Edit':'Add'} 
                         </Button>
                     </Form>
 

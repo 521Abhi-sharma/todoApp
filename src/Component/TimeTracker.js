@@ -62,7 +62,9 @@ const TimeTracker = () => {
     }, []);
 
     return (
-        <p>this is demo app, its destroy your data with in minutes{timeTracker1}</p>
+        <>
+        <p className="text-white my-2 my-sm-0">This is demo app, it destroy your data in <span className="text-danger">{timeTracker1}</span>  minutes</p>
+        </>
     );
 }
 export default TimeTracker;

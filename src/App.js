@@ -4,7 +4,7 @@ import TodosContainer from './Component/TodosContainer';
 import Head from './Component/Header';
 import Footer from './Component/Footer';
 import TodoFrom from './Component/TodoForm';
-import TimeTracker from './Component/TimeTracker';
+// import TimeTracker from './Component/TimeTracker';
 import "./App.css";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
@@ -112,26 +112,19 @@ function App() {
   }
 
   useEffect(() => {
-    // removeDataFromServerInEvery5mint();
     getAllList();
   }, []);
 
-  // delete functionality automatically START
-  
+  // delete functionality automatically delete data with in time  
   const removeDataFromServerInEvery5mint = async () => {
-    //here is one issue , state print wrong data
-    // console.log('delete functionality running',noteBookData);
+    console.log('state data inside functin', noteBookData);
     const response = await getDataFromApi();
     const noteBookDataIds = response.data.map((item)=>{
       return item.id;
     })
     noteBookDataIds.forEach(noteBookId => {
-      console.log('print id inside nootbookid loss',noteBookId);
-      // noteBookDataDelete(element);
-      deleteDataUsingApi(noteBookId);
+      noteBookDataDelete(noteBookId);
     });
-    // console.log(noteBookDataIds);
-    
   };
 
   const noteBookDataAdd = async (fromData) => {
@@ -213,11 +206,9 @@ function App() {
         pauseOnHover
       />
       <Head/>
-      {noteBookData.length >0 && (<TimeTracker/>) }
       <TodoFrom />
-      <TodosContainer />
+      {noteBookData.length >0 && (<TodosContainer />) }
       <Footer />
-
     </NotesContext.Provider>
   );
 }
