@@ -234,8 +234,9 @@ button.form_open_Close_btn {
   position: relative;
   top: -52px;
   left: 6px;
-  background-color: grey;
+  background-color: #c4c4c4;
   border: 1px solid white;
+  font-size: small;
 }
 
 .search_list {
