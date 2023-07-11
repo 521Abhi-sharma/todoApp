@@ -175,6 +175,12 @@ function App() {
       return;
     }
     const response = await filterDataUsingApi(Date);
+
+    
+      if(response.data.length===0){
+        toast.success('Data NOt Exist In Selected Date');
+      }
+    
     dispatch({ type: "filter", data:response.data });
   }
 
