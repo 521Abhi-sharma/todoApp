@@ -242,3 +242,8 @@ button.form_open_Close_btn {
 .search_list {
   position: absolute;
 }
+
+input.filterListByDate.form-control {
+  min-width: 87px;
+  /* width: 87px; */
+}
