@@ -228,3 +228,16 @@ button.form_open_Close_btn {
 .time{
   color: white;
 }
+
+
+.search_list span {
+  position: relative;
+  top: -52px;
+  left: 6px;
+  background-color: grey;
+  border: 1px solid white;
+}
+
+.search_list {
+  position: absolute;
+}

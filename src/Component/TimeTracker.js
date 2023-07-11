@@ -10,7 +10,7 @@ const TimeTracker = () => {
         let deadline = new Date();
         // console.log('time', deadline);
         // deadline.setSeconds(deadline.getSeconds() + 10);
-        deadline.setMinutes(deadline.getMinutes() + 1);
+        deadline.setMinutes(deadline.getMinutes() + 5);
         // console.log('time after add time', deadline);
         return deadline;
     }
